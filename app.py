@@ -21,7 +21,7 @@ MODEL_PATH = 'model.pkl'
 def create_model():
     # We provide REAL numbers here so there is no SyntaxError
     # Example: [Nitrogen, Phosphorus, Potassium, Temperature]
-    X_train = np.array([,,])
+    X_train = np.array([,90, 42, 43,])
     y_train = np.array(['Rice', 'Wheat', 'Maize'])
     m = RandomForestClassifier().fit(X_train, y_train)
     joblib.dump(m, MODEL_PATH)
