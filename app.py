@@ -24,6 +24,9 @@ app = Flask(__name__)
 
 # Allow Cross-Origin Resource Sharing (so your Vercel/Frontend can talk to this API)
 CORS(app)
+@app.route("/")
+def home():
+    return jsonify({"message": "Hello from Flask!"})
 
 # --- 4. REGISTER BLUEPRINTS ---
 # This connects your modular files to the main app
