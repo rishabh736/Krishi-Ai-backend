@@ -38,5 +38,6 @@ def home():
     return jsonify({"status": "Krishi-Ai is running!"})
 
 if __name__ == "__main__":
+    # This is for local testing: python app.py
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port)
