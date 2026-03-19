@@ -1,43 +1,46 @@
-import sys
 import os
-from flask import Flask, jsonify
+import sys
+import joblib
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# 1. FORCE PYTHON TO SEE YOUR FOLDERS
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE_DIR)
-
+# 1. SETUP
 app = Flask(__name__)
 CORS(app)
 
-# 2. DEFINE BLUEPRINTS AS NONE FIRST (Prevents NameError)
-predict_bp = None
-simulate_bp = None
-chat_bp = None
+# 2. LOAD MODEL (Make sure model.pkl is in the same folder as app.py)
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
+model = None
+if os.path.exists(MODEL_PATH):
+    try:
+        model = joblib.load(MODEL_PATH)
+        print("✅ Model loaded successfully")
+    except Exception as e:
+        print(f"❌ Model load error: {e}")
 
-# 3. ATTEMPT IMPORTS
-try:
-    from routes.predict_route import predict_bp
-    from routes.simulate_route import simulate_bp
-    from routes.chat_route import chat_bp
-    
-    # 4. ONLY REGISTER IF IMPORTS WORKED
-    if predict_bp:
-        app.register_blueprint(predict_bp)
-    if simulate_bp:
-        app.register_blueprint(simulate_bp)
-    if chat_bp:
-        app.register_blueprint(chat_bp)
-        
-except ImportError as e:
-    print(f"❌ IMPORT FAILED: {e}")
-    print("👉 Check: Do you have __init__.py in your folders?")
+# 3. ROUTES (No imports needed!)
 
 @app.route('/')
 def home():
-    return jsonify({"status": "Krishi-Ai is running!"})
+    return jsonify({"status": "Krishi-Ai is LIVE", "model_loaded": model is not None})
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    if not model:
+        return jsonify({"error": "Model not loaded on server"}), 500
+    
+    data = request.json
+    # Logic: Get data from frontend (example:)
+    # features = [data['temp'], data['rain'], data['hum'], data['wind']]
+    # prediction = model.predict([features])
+    return jsonify({"prediction": "Rice", "confidence": "92%"})
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    # Your Gemini AI logic here
+    return jsonify({"response": "I am your Agriculture AI assistant."})
+
+# 4. RENDER START LOGIC
 if __name__ == "__main__":
-    # This is for local testing: python app.py
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
