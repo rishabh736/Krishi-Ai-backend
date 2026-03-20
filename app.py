@@ -9,13 +9,12 @@ from sklearn.ensemble import RandomForestClassifier
 app = Flask(__name__)
 CORS(app)
 
-# 1. GEMINI AI SETUP
-# Replace "YOUR_KEY_HERE" if you aren't using Render Environment Variables
+
 API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDtR5bheAVr4uCogM9em_fbx4Gb-nXb868")
 genai.configure(api_key=API_KEY)
 ai_model = genai.GenerativeModel('gemini-pro')
 
-# 2. MODEL LOADING (With a fix for the [,,] error)
+
 MODEL_PATH = 'model.pkl'
 
 def create_model():
@@ -27,7 +26,7 @@ def create_model():
     joblib.dump(m, MODEL_PATH)
     return m
 
-# Attempt to load or create
+
 try:
     if os.path.exists(MODEL_PATH):
         model = joblib.load(MODEL_PATH)
